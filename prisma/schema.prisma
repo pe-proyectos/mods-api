@@ -1,0 +1,250 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Game {
+  id Int @id @default(autoincrement())
+
+  code           String  @unique
+  slug           String  @unique
+  domain         String  @unique
+  title          String
+  name           String
+  description    String  @default("")
+  logoLgImageUrl String?
+  logoMdImageUrl String?
+  logoSmImageUrl String?
+
+  logoFooterImageUrl String?
+
+  youtubeUrl   String?
+  facebookUrl  String?
+  xUrl         String?
+  instagramUrl String?
+
+  footerRelatedSitesCategory FooterRelatedSitesCategory[]
+  mods                       Mod[]
+  modLoaders                 ModLoader[]
+  categories                 Category[]
+}
+
+model FooterRelatedSitesCategory {
+  id Int @id @default(autoincrement())
+
+  title String
+
+  gameId Int
+  game   Game @relation(fields: [gameId], references: [id])
+
+  gameRelatedSites GameRelatedSite[]
+}
+
+model GameRelatedSite {
+  id Int @id @default(autoincrement())
+
+  name        String
+  description String?
+  url         String
+
+  footerRelatedSitesCategoryId Int
+  footerRelatedSitesCategory   FooterRelatedSitesCategory @relation(fields: [footerRelatedSitesCategoryId], references: [id])
+}
+
+model User {
+  id         Int     @id @default(autoincrement())
+  email      String  @unique
+  password   String
+  name       String
+  imageUrl   String  @default("")
+  slug       String  @unique
+  canApprove Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mods         Mod[]
+  comments     Comment[]
+  favoriteMods ModFavorite[]
+  tokens       Token[]
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  token     String
+  expiresAt DateTime
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LoginAttempt {
+  id Int @id @default(autoincrement())
+
+  ip        String
+  userAgent String
+  email     String
+  success   Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ModLoader {
+  id Int @id @default(autoincrement())
+
+  code        String
+  slug        String @unique
+  name        String
+  description String
+
+  game   Game? @relation(fields: [gameId], references: [id])
+  gameId Int?
+
+  @@unique([gameId, code])
+}
+
+model Mod {
+  id Int @id @default(autoincrement())
+
+  code             String
+  name             String
+  slug             String
+  shortDescription String  @default("")
+  description      String
+  dependencies     String  @default("")
+  type             String?
+  isNSFW           Boolean
+  isApproved       Boolean
+  isFeatured       Boolean
+
+  lastReleasedAt DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user       User?         @relation(fields: [userId], references: [id])
+  userId     Int?
+  category   Category?     @relation(fields: [categoryId], references: [id])
+  categoryId Int?
+  game       Game?         @relation(fields: [gameId], references: [id])
+  gameId     Int?
+  versions   ModVersion[]
+  tags       Tag[]
+  images     ModImage[]
+  favorites  ModFavorite[]
+  comments   Comment[]
+
+  @@unique([gameId, code])
+}
+
+model ModImage {
+  id          Int     @id @default(autoincrement())
+  url         String
+  previewUrl  String?
+  isPrimary   Boolean
+  isThumbnail Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mod   Mod? @relation(fields: [modId], references: [id])
+  modId Int?
+}
+
+model ModVersion {
+  id          Int     @id @default(autoincrement())
+  version     String
+  isLatest    Boolean
+  changelog   String
+  downloadUrl String
+  extension   String?
+  filename    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mod       Mod?          @relation(fields: [modId], references: [id])
+  modId     Int?
+  downloads ModDownload[]
+}
+
+model Tag {
+  id          Int    @id @default(autoincrement())
+  name        String
+  slug        String @unique
+  description String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  mods Mod[]
+}
+
+model Category {
+  id              Int    @id @default(autoincrement())
+  name            String
+  slug            String @unique
+  description     String
+  categoryIconUrl String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  gameId Int
+  game   Game @relation(fields: [gameId], references: [id])
+
+  mods Mod[]
+}
+
+model ModDownload {
+  id        Int    @id @default(autoincrement())
+  ip        String
+  userAgent String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  version      ModVersion? @relation(fields: [modVersionId], references: [id])
+  modVersionId Int?
+}
+
+model ModFavorite {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  mod   Mod? @relation(fields: [modId], references: [id])
+  modId Int?
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  message String
+
+  isHidden Boolean
+
+  ip String
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  mod   Mod @relation(fields: [modId], references: [id])
+  modId Int
+
+  replyId Int?
+  reply   Comment?  @relation("CommentToComment", fields: [replyId], references: [id])
+  replies Comment[] @relation("CommentToComment")
+}

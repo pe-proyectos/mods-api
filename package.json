@@ -1,0 +1,37 @@
+{
+  "name": "sotf-mods-api",
+  "version": "1.0.50",
+  "scripts": {
+    "start": "bun src/index.ts",
+    "dev": "bun run --watch src/index.ts"
+  },
+  "devDependencies": {
+    "bun-types": "latest",
+    "@types/adm-zip": "^0.5.5",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/sanitize-html": "^2.11.0",
+    "@types/semver": "^7.5.8"
+  },
+  "dependencies": {
+    "@bogeychan/elysia-logger": "^0.0.17",
+    "@elysiajs/cors": "^1.1.0",
+    "@elysiajs/swagger": "^0.8.5",
+    "@grotto/logysia": "^0.1.4",
+    "@prisma/client": "^5.18.0",
+    "adm-zip": "^0.5.15",
+    "chatgpt": "^5.2.5",
+    "dice-similarity-coeff": "^1.1.1",
+    "elysia": "^1.1.6",
+    "fastest-levenshtein": "^1.0.16",
+    "image-size": "^1.1.1",
+    "jose": "^5.6.3",
+    "jsonwebtoken": "^9.0.2",
+    "sanitize-html": "^2.13.0",
+    "semver": "^7.6.3",
+    "sharp": "^0.33.5",
+    "slugify": "^1.6.6",
+    "unzip": "^0.1.11",
+    "zlib": "^1.0.5"
+  },
+  "module": "src/index.js"
+}
