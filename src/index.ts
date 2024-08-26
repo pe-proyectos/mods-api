@@ -5,6 +5,7 @@ import { swagger } from '@elysiajs/swagger';
 import { router } from './router';
 import { errorHandler } from './handlers/error.handler';
 import { loggerPlugin } from './plugins/logger.plugin';
+import { gameMiddleware } from './middlewares/game.middleware';
 
 const app = new Elysia()
 	.use(swagger())

@@ -10,12 +10,17 @@ datasource db {
 model Game {
   id Int @id @default(autoincrement())
 
-  code           String  @unique
-  slug           String  @unique
-  domain         String  @unique
-  title          String
-  name           String
-  description    String  @default("")
+  code              String @unique
+  slug              String @unique
+  domain            String @unique
+  title             String
+  name              String
+  description       String @default("")
+  footerDescription String @default("")
+
+  faviconUrl    String?
+  shareImageUrl String?
+
   logoLgImageUrl String?
   logoMdImageUrl String?
   logoSmImageUrl String?
@@ -26,6 +31,7 @@ model Game {
   facebookUrl  String?
   xUrl         String?
   instagramUrl String?
+  discordUrl   String?
 
   footerRelatedSitesCategory FooterRelatedSitesCategory[]
   mods                       Mod[]
