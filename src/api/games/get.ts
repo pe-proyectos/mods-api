@@ -23,7 +23,6 @@ export const router = new Elysia()
             if (!game) {
                 throw new NotFoundError();
             }
-            console.log(game);
             return game;
         },
         {
